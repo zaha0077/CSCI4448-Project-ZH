@@ -11,7 +11,7 @@ public class Entity : MonoBehaviour {
 	public float getSpeed(){
 		return speed_;
 	}
-	public void Move(){
+	public virtual void Move(){
 		Vector3 temp = this.transform.position;
 		temp.x += speed_;
 		this.transform.position = temp;
@@ -19,7 +19,7 @@ public class Entity : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		setSpeed (0.5f);
 	}
 	
 	// Update is called once per frame

@@ -18,15 +18,19 @@ public class Player : Entity {
 
 
 	//Test for free space for horizontal movement.
-	bool checkPosition(float speed){
+	bool checkPosition(float speed, Vector3 pos){
 		Vector3 direction;
 		if (speed < 0.0f) {
 			direction = Vector2.left;
 		} else {
 			direction = Vector2.right;
 		}
+
+		Vector3 side_a = new Vector3 (pos.x,pos.y+0.03f,pos.z);
+		Vector3 side_b = new Vector3 (pos.x,pos.y-0.03f,pos.z);
+
 		//Debug.DrawRay (this.transform.position, direction * 0.08f);
-		return !Physics2D.Raycast (this.transform.position, direction, 0.14f, LayerMask.GetMask("Solids"));
+		return !(Physics2D.Raycast (side_a, direction, 0.14f, LayerMask.GetMask("Solids")) && Physics2D.Raycast (side_b, direction, 0.14f, LayerMask.GetMask("Solids")));
 	}
 
 	//Movement behavior
@@ -45,7 +49,7 @@ public class Player : Entity {
 
 		Debug.Log (dir_);
 
-		if (checkPosition(hspeed_)){
+		if (checkPosition(hspeed_, temp)){
 			temp.x += hspeed_;
 			}
 
@@ -84,8 +88,9 @@ public class Player : Entity {
 	
 	// Code executed every frame
 	void Update () {
+		Vector3 pos = this.transform.position;
 		if (Input.GetAxis ("Fire1") > 0 && can_shoot_) {
-			Instantiate (shot, this.transform.position, Quaternion.identity);
+			Instantiate (shot, pos, Quaternion.identity);
 			can_shoot_ = false;
 			cooldown_ = 7;
 		}
@@ -95,8 +100,11 @@ public class Player : Entity {
 			gravity_ += 0.01f;
 		}
 
+		Vector3 side_a = new Vector3 (pos.x + 0.05f, pos.y, pos.z);
+		Vector3 side_b = new Vector3 (pos.x - 0.05f, pos.y, pos.z);
+
 		//Apply gravity if we walk off a platform.
-		if ((!in_air_) && (!Physics2D.Raycast (this.transform.position, Vector2.down, 0.18f))) {
+		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f)) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f)))) {
 			in_air_ = true;
 		}
 

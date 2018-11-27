@@ -26,7 +26,7 @@ public class Player : Entity {
 			direction = Vector2.right;
 		}
 		//Debug.DrawRay (this.transform.position, direction * 0.08f);
-		return !Physics2D.Raycast (this.transform.position, direction, 0.14f);
+		return !Physics2D.Raycast (this.transform.position, direction, 0.14f, LayerMask.GetMask("Solids"));
 	}
 
 	//Movement behavior

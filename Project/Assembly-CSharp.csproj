@@ -49,7 +49,10 @@
      <Compile Include="Assets\Controller.cs" />
      <Compile Include="Assets\Enemy.cs" />
      <Compile Include="Assets\Entity.cs" />
+     <Compile Include="Assets\Hazard.cs" />
      <Compile Include="Assets\Player.cs" />
+     <Compile Include="Assets\Projectile.cs" />
+     <Compile Include="Assets\Shard.cs" />
      <Compile Include="Assets\Solid.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

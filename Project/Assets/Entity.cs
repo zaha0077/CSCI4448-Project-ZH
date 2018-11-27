@@ -3,22 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour {
-	private float speed_;
+	private float speed_; //Movement velocity, some someclasses use this for horizontal movement only.
+	private bool invincible_ = false; //Can damageable objects be harmed?
+	protected bool quitting_ = false; //Used with the OnApplicationQuit function..
+	protected int hurt_ticks_ = 0; //Used by subclasses that can be damaged to prevent constant contact damage.
+	protected int hurt_max_ = 5; //How many frames until damageable objects can be hurt again.
 
-	public void setSpeed(float value){
+
+	public void setSpeed(float value){ 
 		speed_ = value;
 	}
+
 	public float getSpeed(){
 		return speed_;
 	}
+
+	public void setInvincible(bool val){
+		invincible_ = val;
+	}
+
+	public bool getInvincible(){
+		return invincible_;
+	}
+
+	//Template for movement behavior
 	public virtual void Move(){
 	}
 
-	// Use this for initialization
+	//Built-in unity functions used in almost all Unity classes:
+	// initialization
 	void Start () {
 	}
 	
-	// Update is called once per frame
+	// Behavior of the object at every frame
 	void Update () {
+	}
+
+	//Override of OnApplicationQuit from MonoBehavior.
+	void OnApplicationQuit(){
+		quitting_ = true;
 	}
 }

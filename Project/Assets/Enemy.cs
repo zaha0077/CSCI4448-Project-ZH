@@ -3,32 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : Entity {
+	protected int hp_;
+	public GameObject shard;
 
-	private int ticks = 16;
-	private bool up = true;
-
-	public override void Move(){
-		Vector3 temp = this.transform.position;
-		if (up) {
-			temp.y += getSpeed ();
-		} else {
-			temp.y -= getSpeed ();
-		}
-		this.transform.position = temp;
+	public void takeDamage(int value){
+		hp_ -= value;
 	}
 
-	// Use this for initialization
+	//Functions from Unity's MonoBehavior class.
+	// Initialization
 	void Start () {
-		setSpeed (0.01f);
+		hp_ = 20;
 	}
 	
-	// Update is called once per frame
+	// Code executed every frame.
 	void Update () {
-		Move ();
-		if (ticks == 0) {
-			ticks = 32;
-			up = !up;
+		if (hp_ <= 0) {
+			Destroy (this.gameObject);
 		}
-		ticks--;
+	}
+
+	//Destruction behavior
+	void OnDestroy(){
+		if (!quitting_) {
+			for (int i = 1; i < 5; i++) {
+				GameObject tmp = Instantiate (shard, this.transform.position, Quaternion.identity);
+				tmp.GetComponent<Shard> ().setDirection (45.0f + (90.0f * i));
+			}
+		}
 	}
 }

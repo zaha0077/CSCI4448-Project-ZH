@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Solid : MonoBehaviour {
 
-	// Use this for initialization
+	//Built-in Unity functions from the MonoBehavior class.
+	// Initialization
 	void Start () {
-		
+
 	}
 
-	// Update is called once per frame
+	// Behavior to be executed every frame.
 	void Update () {
-		
+
 	}
 }

@@ -41,7 +41,7 @@ public class Bouncer : Enemy {
 	void Update () {
 		Move ();
 		this.transform.Rotate (0,0,22.5f);
-		commonBehavior ();
+		manageHealth ();
 		if (bounceticks_ > -1) {
 			if (bounceticks_ == 0) {
 				cooldown_ = false;

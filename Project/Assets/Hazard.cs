@@ -10,9 +10,4 @@ public class Hazard : Enemy {
 		hp_ = 9999;
 		setInvincible (true);
 	}
-
-	// Behavior to be executed every frame.
-	void Update () {
-
-	}
 }

@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour {
+	//personal params;
+	private Color red_ = new Color (1f, 0f, 0f);
+	private Color white_ = new Color (1f, 1f, 1f);
+	private string wintext_ = "A Winner is You!"; //text to display on winning.
+
 	//game parameters
 	private bool critical_ = false; //is health critical?
 	private bool gameover_ = false; //is the game over?
@@ -17,10 +23,12 @@ public class Controller : MonoBehaviour {
 	public static string txtstr_ = ""; //text to display 
 	public static int txt_timer_ = -1; //Counter for how long to display a particular text.
 	public static bool txtflag_ = false; //Used to tell when to update displayed text.
+	public static bool endflag_ = false; //Did we win?
 
 	//Parameters that allow communication with the UI
 	public Text itemtxt;
 	public Text healthtxt;
+	public Text subtitle;
 
 	//Prefabs for instantiation
 	public Transform wall;
@@ -33,13 +41,10 @@ public class Controller : MonoBehaviour {
 	public Object item3;
 	public Object item4;
 	public Object player;
-
-	//personal params;
-	private Color red_ = new Color (1f, 0f, 0f);
-	private Color white_ = new Color (1f, 1f, 1f);
+	public Object endzone;
 
 	//The game world
-	int[,] layout = new int[80,72] {
+	private int[,] layout = new int[80,72] {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -125,54 +130,38 @@ public class Controller : MonoBehaviour {
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 		};
 
-	//,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 
-	/*
-
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-	*/
-
-	public void SetText(){
+	//Set the current display text.
+	public void setText(){
 		itemtxt.text = txtstr_;
 		txt_timer_ = 90;
 		txtflag_ = false;
 	}
 
-	//Overrides of functions from Unity's MonoBehavior class.
-	// Initialization
-	void Start () {
-		player_instance_ = Instantiate (player, new Vector3 (0.0f, -0.72f, 0.0f), Quaternion.identity) as GameObject;
-		Camera.main.transform.parent = player_instance_.transform; //Set the camera to follow the player.
-		health_ = 100;
-		shot_range_ = 8;
-		fire_rate_ = 28;
-		jumpcap_ = 1;
-		dmg_ = 10;
+	//Restart the game
+	public void Restart(){
+		Entity.quitting_ = true;
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+	}
+
+	//Trigger a gameover
+	public void doGameOver(){
+		health_ = 0;
+		Camera.main.transform.parent = null; //Tell the camera to stop following the player
+		Destroy(player_instance_); //kill the player.
+		itemtxt.text = "";
+		itemtxt.fontSize = 48;
+		txt_timer_ = 90;
+		gameover_ = true; //Prevent this section of code from being executed more than once.
+	}
+
+	//generate the level from the layout array.
+	public void generateLevel(){
+		
 		float x0 = -1.28f;
 		float y0 = -0.96f;
 		float step = 0.16f;
-		itemtxt.text = "";
 
-		//generate the level from the array.
 		for (int i = 0; i < layout.GetLength(0); i++){
 			for (int j = 0; j < layout.GetLength(1); j++) {
 				Vector3 pos = new Vector3 (x0 + (step * i), y0 + (step * j), 0.0f);
@@ -204,23 +193,19 @@ public class Controller : MonoBehaviour {
 				case 9: //Item #4 Repeater Upgrade
 					Instantiate (item4, pos, Quaternion.identity);
 					break;
+				case 10: //Exit
+					Instantiate (endzone, pos, Quaternion.identity);
+					break;
 				default:
 					break;					
 				}
 			}
 		}
-
-
 	}
-	
-	// Code executed every frame.
-	void Update () {
 
+	//Adjust the health display in the UI
+	private void adjustHealthDisplay(){
 		healthtxt.text = "HP: " + health_.ToString ();
-
-		if (txtflag_){
-			SetText ();
-		}
 
 		if (health_ <= 30 && !critical_) {
 			healthtxt.color = red_;
@@ -229,27 +214,82 @@ public class Controller : MonoBehaviour {
 			healthtxt.color = white_;
 			critical_ = false;
 		}
+	}
+
+	//Checks for keyboard input and resolves accordingly
+	private void resolveKeys(){
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			Application.Quit ();
+		}
+
+		if (!endflag_ && Input.GetKeyDown (KeyCode.R)) {
+			Restart ();
+		}
+	}
+
+	//Resolve timer-related actions
+	private void resolveTimer(){
+		if (txt_timer_ == 0 ) {
+			if (gameover_) {
+				itemtxt.text = "Game Over";
+				subtitle.text = "(R - Restart, Esc - Quit)";
+			} else if (endflag_){
+				Application.Quit ();
+			} else {
+				itemtxt.text = "";
+			}
+		}
+		txt_timer_--;
+	}
+
+	//Trigger a win if conditions are met
+	private void resolveEndgame(){
+		if (endflag_ && itemtxt.text != wintext_) {
+			itemtxt.fontSize = 24;
+			itemtxt.text = wintext_;
+			txt_timer_ = 90;
+		}
+	}
+
+	//Overrides of functions from Unity's MonoBehavior class.
+
+	// Initialization
+	void Start () {
+		player_instance_ = Instantiate (player, new Vector3 (0.0f, -0.72f, 0.0f), Quaternion.identity) as GameObject;
+		Camera.main.transform.parent = player_instance_.transform; //Set the camera to follow the player.
+		health_ = 100;
+		shot_range_ = 8;
+		fire_rate_ = 28;
+		jumpcap_ = 1;
+		dmg_ = 10;
+		itemtxt.fontSize = 18;
+		txt_timer_ = 150;
+		itemtxt.text = "Controls:\nArrow Keys - Move\nZ - Jump\nX - Shoot\nR - Reset\nEsc - Quit";
+		subtitle.text = "";
+		Entity.quitting_ = false;
+
+		generateLevel ();
+	}
+	
+	// Code executed every frame.
+	void Update () {
+
+		resolveKeys ();
+
+		if (txtflag_){
+			setText ();
+		}
+
+		adjustHealthDisplay ();
 
 		if (health_ <= 0 && !gameover_) {
-			health_ = 0;
-			Camera.main.transform.parent = null; //Tell the camera to stop following the player
-			Destroy(player_instance_);
-			//Destroy (GameObject.Find("player")); //kill the player
-			itemtxt.text = "";
-			itemtxt.fontSize = 48;
-			txt_timer_ = 90;
-			gameover_ = true; //Prevent this section of code from being executed more than once.
+			doGameOver ();
 		}
-
+			
 		if (txt_timer_ >= 0) {
-			if (txt_timer_ == 0 ) {
-				if (gameover_) {
-					itemtxt.text = "Game Over";
-				} else {
-					itemtxt.text = "";
-				}
-			}
-			txt_timer_--;
+			resolveTimer ();
 		}
+			
+		resolveEndgame ();
 	}
 }

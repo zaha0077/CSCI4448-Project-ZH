@@ -12,7 +12,8 @@ public class Enemy : Entity {
 		hurt_ticks_ = hurt_max_;
 	}
 
-	public void commonBehavior(){
+	//Manages behavior when for when enemies take damage or die.
+	public void manageHealth(){
 		//Reset color
 		if (hurt_ticks_ == 0) {
 			GetComponent<SpriteRenderer> ().color = normalcolor_;

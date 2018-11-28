@@ -7,12 +7,14 @@ public class Player : Entity {
 
 	private float gravity_; //Vertical movement speed.
 	private float hspeed_; //Horizontal speed.
+	private float terminal_vel_ = 0.05f; //Terminal velocity, or max falling speed. 
 	private bool in_air_; //Checks if the player is already in the air.
 	private bool can_shoot_ = true; //Can we shoot?
 	private int cooldown_; //Frames until we can shoot again.
 	private int jumps_ = 0; //how many times we have jumped.
 
-	public static int dir_ = 1; //Horizontal direction, 1 for right, -1 for left
+	public static int dir_ = 1; //Horizontal direction, 1 for right, -1 for left. Used by projectiles to determine what direction to travel in.
+
 	public GameObject shard; //Used to hold the prefab that the player instantiates upon destruction.
 	public GameObject shot; //Used to hold the prefab containing bullet object information.
 
@@ -29,9 +31,26 @@ public class Player : Entity {
 
 		Vector3 side_a = new Vector3 (pos.x,pos.y+0.03f,pos.z);
 		Vector3 side_b = new Vector3 (pos.x,pos.y-0.03f,pos.z);
-
-		//Debug.DrawRay (this.transform.position, direction * 0.08f);
 		return !(Physics2D.Raycast (side_a, direction, 0.14f, LayerMask.GetMask("Solids")) && Physics2D.Raycast (side_b, direction, 0.14f, LayerMask.GetMask("Solids")));
+	}
+
+	//Sets the direction of the player's sprite.
+	float changeSpriteDirection(float value){
+		if (hspeed_ != 0.0f) {
+			value = hspeed_ / Mathf.Abs (hspeed_);
+			dir_ = (int)value;
+		}
+		return value;
+	}
+
+	public void Jump(){
+		in_air_ = true;
+		gravity_ = -0.14f;
+		jumps_++;
+	}
+
+	public bool canJump (){
+		return Input.GetButtonDown ("Jump") && jumps_ < Controller.jumpcap_;
 	}
 
 	//Movement behavior
@@ -41,22 +60,15 @@ public class Player : Entity {
 
 		if (!getInvincible ()) {
 			hspeed_ = Input.GetAxis ("Horizontal") * getSpeed ();
-
-			if (hspeed_ != 0.0f) {
-				scale.x = hspeed_ / Mathf.Abs (hspeed_);
-				dir_ = (int)scale.x;
-			}
+			scale.x = changeSpriteDirection (scale.x);
 		}
-
-
+	
 		if (checkPosition(hspeed_, temp)){
 			temp.x += hspeed_;
 			}
 
-		if (Input.GetButtonDown ("Jump") && jumps_ < Controller.jumpcap_) {
-			in_air_ = true;
-			gravity_ = -0.14f;
-			jumps_++;
+		if (canJump()) {
+			Jump ();
 		}
 
 		if (in_air_) {
@@ -68,7 +80,7 @@ public class Player : Entity {
 	}
 
 	//Take damage.
-	void triggerHurt(){
+	public void triggerHurt(){
 		Controller.health_ -= 10;
 		setInvincible (true);
 		hurt_ticks_ = hurt_max_;
@@ -77,6 +89,58 @@ public class Player : Entity {
 		gravity_ = -0.10f;
 		GetComponent<SpriteRenderer> ().color = hurtcolor_;
 		Debug.Log (Controller.health_);
+	}
+
+	//Shooting
+	private void Shoot (){
+		if (Input.GetAxis ("Fire1") > 0 && can_shoot_) {
+			Instantiate (shot, this.transform.position, Quaternion.identity);
+			can_shoot_ = false;
+			cooldown_ = Controller.fire_rate_;
+		}
+	}
+
+	//Check if we walk off a platform.
+	private void checkFloor(Vector3 pos){
+		
+		Vector3 side_a = new Vector3 (pos.x + 0.05f, pos.y, pos.z);
+		Vector3 side_b = new Vector3 (pos.x - 0.05f, pos.y, pos.z);
+
+		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f)) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f)))) {
+			in_air_ = true;
+			jumps_++;
+		}
+	}
+
+	//Manage the timer for mercy invincibility.
+	private void resolveHurtCounter(){
+		//Reset mercy invincibility
+		if (getInvincible () && hurt_ticks_ == 0) {
+			GetComponent<SpriteRenderer> ().color = normalcolor_;
+			setInvincible (false);
+		}
+
+		//Decrement hurt ticks
+		if (hurt_ticks_ > 0) {
+			hurt_ticks_--;
+		}
+	}
+
+	//Resolves shot cooldown
+	private void resolveShotCooldown(){
+		//Decrement shot cooldown
+		if (cooldown_ > 0) {
+			cooldown_--;
+		} else if (!can_shoot_) { //Make us able to shoot again.
+			can_shoot_ = true;
+		}
+	}
+
+	//Apply gravity effects.
+	private void doFallAccelaration(){
+		if (in_air_ && gravity_ < terminal_vel_) {
+			gravity_ += 0.01f;
+		}
 	}
 
 	//Overrides of functions from Unity's MonoBehavior class.
@@ -89,48 +153,17 @@ public class Player : Entity {
 	
 	// Code executed every frame
 	void Update () {
-		Vector3 pos = this.transform.position;
-
 		//Shoot if able
-		if (Input.GetAxis ("Fire1") > 0 && can_shoot_) {
-			Instantiate (shot, pos, Quaternion.identity);
-			can_shoot_ = false;
-			cooldown_ = Controller.fire_rate_;
-		}
-			
-		//Apply gravity.
-		if (in_air_ && gravity_ < 0.05f) {
-			gravity_ += 0.01f;
-		}
+		Shoot();
+		doFallAccelaration ();
+		checkFloor(this.transform.position);
+		resolveHurtCounter ();
+		resolveShotCooldown ();
 
-		Vector3 side_a = new Vector3 (pos.x + 0.05f, pos.y, pos.z);
-		Vector3 side_b = new Vector3 (pos.x - 0.05f, pos.y, pos.z);
-
-		//Check if we walk off a platform.
-		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f)) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f)))) {
-			in_air_ = true;
-			jumps_++;
+		//Apply movement behavior
+		if (!Controller.endflag_) {
+			Move ();
 		}
-
-		//Reset mercy invincibility
-		if (getInvincible () && hurt_ticks_ == 0) {
-			GetComponent<SpriteRenderer> ().color = normalcolor_;
-			setInvincible (false);
-		}
-
-		//Decrement hurt ticks
-		if (hurt_ticks_ > 0) {
-			hurt_ticks_--;
-		}
-
-		//Decrement shot cooldown
-		if (cooldown_ > 0) {
-			cooldown_--;
-		} else if (!can_shoot_) { //Make us able to shoot again.
-			can_shoot_ = true;
-		}
-
-		Move ();
 
 	}
 
@@ -163,6 +196,13 @@ public class Player : Entity {
 		if (col.gameObject.GetComponent<Enemy>() != null) {
 			if (!getInvincible ()) { //If we can be hurt, do the following.
 				triggerHurt();
+			}
+		}
+
+		//Exit Collision
+		if (col.gameObject.GetComponent<Exit>() != null) {
+			if (!Controller.endflag_) { //If we can be hurt, do the following.
+				Controller.endflag_ = true;
 			}
 		}
 	}

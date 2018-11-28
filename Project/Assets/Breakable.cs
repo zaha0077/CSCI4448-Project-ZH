@@ -12,7 +12,8 @@ public class Breakable : Solid {
 		hit_ = true;
 		Destroy (this.gameObject);
 	}
-
+		
+	//Override of method inherited from MonoBehavior
 	void OnDestroy(){
 		if (hit_) {
 			for (int i = 1; i < 5; i++) {

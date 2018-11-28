@@ -51,6 +51,7 @@
      <Compile Include="Assets\Controller.cs" />
      <Compile Include="Assets\Enemy.cs" />
      <Compile Include="Assets\Entity.cs" />
+     <Compile Include="Assets\Exit.cs" />
      <Compile Include="Assets\Floater.cs" />
      <Compile Include="Assets\Hazard.cs" />
      <Compile Include="Assets\Item.cs" />

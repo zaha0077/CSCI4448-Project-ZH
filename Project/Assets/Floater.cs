@@ -24,7 +24,7 @@ public class Floater : Enemy {
 	// Code executed every frame.
 	void Update () {
 		Move ();
-		commonBehavior ();
+		manageHealth ();
 		if (bounceticks_ > -1) {
 			if (bounceticks_ == 0) {
 				cooldown_ = false;

@@ -88,7 +88,6 @@ public class Player : Entity {
 		in_air_ = true;
 		gravity_ = -0.10f;
 		GetComponent<SpriteRenderer> ().color = hurtcolor_;
-		Debug.Log (Controller.health_);
 	}
 
 	//Shooting

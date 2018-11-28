@@ -9,6 +9,6 @@ public class ItemRange : Item {
 		effects_.Add (new Rangeup (8));
 		effects_.Add (new Rateup (7));
 		effects_.Add (new Damageup (5));
-		effects_.Add (new ShowText ("Firepower Increased"));
+		effects_.Add (new ShowText ("Mid-Range Blaster"));
 	}
 }

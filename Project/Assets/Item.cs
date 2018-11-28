@@ -48,20 +48,29 @@ public class Damageup : Effect {
 
 //Sets unique text to display upon item collection.
 public class ShowText : Effect {
-	
+
+	private string str_;
+
 	public ShowText(string str){
-		Controller.txtstr_ = str;
+		str_ = str;
 	}
 
 	public override void Execute(){
+		Controller.txtstr_ = str_;
 		Controller.txtflag_ = true;
 	}
 }
 
-//Increases the jump cap.
+//Changes the jump cap.
 public class JumpChange : Effect {
+	private int val_;
+
+	public JumpChange(int value){
+		val_ = value;
+	}
+
 	public override void Execute(){
-		Controller.jumpcap_++;
+		Controller.jumpcap_ = val_;
 	}
 }
 

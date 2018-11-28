@@ -4,16 +4,20 @@
     <Files>
       <File FileName="Assets\Entity.cs" Line="8" Column="26" />
       <File FileName="Assets\Solid.cs" Line="8" Column="2" />
-      <File FileName="Assets\Player.cs" Line="160" Column="4" />
-      <File FileName="Assets\Enemy.cs" Line="7" Column="2" />
-      <File FileName="Assets\Controller.cs" Line="52" Column="11" />
-      <File FileName="Assets\Shard.cs" Line="15" Column="3" />
+      <File FileName="Assets\Player.cs" Line="157" Column="47" />
+      <File FileName="Assets\Enemy.cs" Line="22" Column="23" />
+      <File FileName="Assets\Controller.cs" Line="106" Column="70" />
+      <File FileName="Assets\Shard.cs" Line="32" Column="3" />
       <File FileName="Assets\Hazard.cs" Line="1" Column="1" />
       <File FileName="Assets\Projectile.cs" Line="38" Column="3" />
-      <File FileName="Assets\Item.cs" Line="32" Column="36" />
-      <File FileName="Assets\ItemRange.cs" Line="12" Column="39" />
+      <File FileName="Assets\Item.cs" Line="60" Column="30" />
+      <File FileName="Assets\ItemRange.cs" Line="8" Column="2" />
       <File FileName="Assets\Breakable.cs" Line="10" Column="2" />
-      <File FileName="Assets\Floater.cs" Line="41" Column="21" />
+      <File FileName="Assets\Floater.cs" Line="5" Column="63" />
+      <File FileName="Assets\Bouncer.cs" Line="26" Column="80" />
+      <File FileName="Assets\ItemJump.cs" Line="4" Column="1" />
+      <File FileName="Assets\ItemSuperShot.cs" Line="8" Column="2" />
+      <File FileName="Assets\ItemRate.cs" Line="10" Column="52" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -48,7 +48,6 @@ public class Player : Entity {
 			}
 		}
 
-		Debug.Log (dir_);
 
 		if (checkPosition(hspeed_, temp)){
 			temp.x += hspeed_;
@@ -153,7 +152,7 @@ public class Player : Entity {
 				temp.y = col.transform.position.y + 0.16f;
 
 			}
-			else if (in_air_){ //if there is a solid object above, bump against it.
+			else if (in_air_ && Physics2D.Raycast (temp, Vector2.up, 0.16f, LayerMask.GetMask ("Solids"))){ //if there is a solid object above, bump against it.
 				gravity_ = 0.0f;
 				temp.y = col.transform.position.y - 0.08f;
 			}

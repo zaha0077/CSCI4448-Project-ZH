@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This enemy lazily floats, bouncing off of walls in its path.
 public class Floater : Enemy {
 
 	private bool cooldown_ = false; //Used to prevent colliding with the same wall more than once.
@@ -34,15 +35,11 @@ public class Floater : Enemy {
 
 	//Collision Detection
 	void OnCollisionEnter2D(Collision2D col){
-		//Vector3 temp = this.transform.position;
 		if (col.gameObject.GetComponent<Solid>() != null && !cooldown_) {
 			bounceticks_ = hurt_max_;
 			cooldown_ = true;
 			setSpeed (-getSpeed());
-			Debug.Log ("foo " + getSpeed().ToString());
-			//temp.x = col.transform.position.x - (0.16f * direction_);
 		}
-		//this.transform.position = temp;
 	}
 
 }

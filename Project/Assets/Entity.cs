@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//"abstract" calss for entities
 public class Entity : MonoBehaviour {
 	private float speed_; //Movement velocity, some someclasses use this for horizontal movement only.
 	private bool invincible_ = false; //Can damageable objects be harmed?
 	protected bool quitting_ = false; //Used with the OnApplicationQuit function..
 	protected int hurt_ticks_ = 0; //Used by subclasses that can be damaged to prevent constant contact damage.
 	protected int hurt_max_ = 5; //How many frames until damageable objects can be hurt again.
+	protected Color hurtcolor_ = new Color (1f, 0f, 0f); //Color to flash when hurt
+	protected Color normalcolor_ = new Color (1f, 1f, 1f); //Default color
 
 
 	public void setSpeed(float value){ 

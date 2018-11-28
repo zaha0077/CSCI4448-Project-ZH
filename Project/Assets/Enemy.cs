@@ -8,20 +8,29 @@ public class Enemy : Entity {
 
 	public void takeDamage(int value){
 		hp_ -= value;
+		GetComponent<SpriteRenderer> ().color = hurtcolor_;
+		hurt_ticks_ = hurt_max_;
 	}
 
-	//Functions from Unity's MonoBehavior class.
-	// Initialization
-	void Start () {
-		hp_ = 20;
-	}
-	
-	// Code executed every frame.
-	void Update () {
+	public void commonBehavior(){
+		//Reset color
+		if (hurt_ticks_ == 0) {
+			GetComponent<SpriteRenderer> ().color = normalcolor_;
+			hurt_ticks_--;
+		}
+
+		//Decrement hurt ticks
+		if (hurt_ticks_ > 0) {
+			hurt_ticks_--;
+		}
+
+		//Death
 		if (hp_ <= 0) {
 			Destroy (this.gameObject);
 		}
 	}
+
+	//Functions from Unity's MonoBehavior class.
 
 	//Destruction behavior
 	void OnDestroy(){

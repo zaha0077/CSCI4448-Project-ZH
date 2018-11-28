@@ -10,6 +10,7 @@ public class Player : Entity {
 	private bool in_air_; //Checks if the player is already in the air.
 	private bool can_shoot_ = true; //Can we shoot?
 	private int cooldown_; //Frames until we can shoot again.
+	private int jumps_ = 0; //how many times we have jumped.
 
 	public static int dir_ = 1; //Horizontal direction, 1 for right, -1 for left
 	public GameObject shard; //Used to hold the prefab that the player instantiates upon destruction.
@@ -53,9 +54,10 @@ public class Player : Entity {
 			temp.x += hspeed_;
 			}
 
-		if (Input.GetButtonDown ("Jump") && !in_air_) {
+		if (Input.GetButtonDown ("Jump") && jumps_ < Controller.jumpcap_) {
 			in_air_ = true;
 			gravity_ = -0.14f;
+			jumps_++;
 		}
 
 		if (in_air_) {
@@ -74,7 +76,7 @@ public class Player : Entity {
 		hspeed_ = -(hspeed_*2f); //knockback
 		in_air_ = true;
 		gravity_ = -0.10f;
-		GetComponent<SpriteRenderer> ().color = new Color (1f, 0f, 0f);
+		GetComponent<SpriteRenderer> ().color = hurtcolor_;
 		Debug.Log (Controller.health_);
 	}
 
@@ -89,37 +91,43 @@ public class Player : Entity {
 	// Code executed every frame
 	void Update () {
 		Vector3 pos = this.transform.position;
+
+		//Shoot if able
 		if (Input.GetAxis ("Fire1") > 0 && can_shoot_) {
 			Instantiate (shot, pos, Quaternion.identity);
 			can_shoot_ = false;
-			cooldown_ = 7;
+			cooldown_ = Controller.fire_rate_;
 		}
 			
-
-		if (in_air_ && gravity_ < 0.06f) {
+		//Apply gravity.
+		if (in_air_ && gravity_ < 0.05f) {
 			gravity_ += 0.01f;
 		}
 
 		Vector3 side_a = new Vector3 (pos.x + 0.05f, pos.y, pos.z);
 		Vector3 side_b = new Vector3 (pos.x - 0.05f, pos.y, pos.z);
 
-		//Apply gravity if we walk off a platform.
+		//Check if we walk off a platform.
 		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f)) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f)))) {
 			in_air_ = true;
+			jumps_++;
 		}
 
+		//Reset mercy invincibility
 		if (getInvincible () && hurt_ticks_ == 0) {
-			GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f);
+			GetComponent<SpriteRenderer> ().color = normalcolor_;
 			setInvincible (false);
 		}
 
+		//Decrement hurt ticks
 		if (hurt_ticks_ > 0) {
 			hurt_ticks_--;
 		}
 
+		//Decrement shot cooldown
 		if (cooldown_ > 0) {
 			cooldown_--;
-		} else if (!can_shoot_) {
+		} else if (!can_shoot_) { //Make us able to shoot again.
 			can_shoot_ = true;
 		}
 
@@ -140,6 +148,7 @@ public class Player : Entity {
 
 			if (getVerticalRelative(col)) { //if there is a solid object below, stand on it.
 				in_air_ = false;
+				jumps_ = 0;
 				gravity_ = 0.0f;
 				temp.y = col.transform.position.y + 0.16f;
 

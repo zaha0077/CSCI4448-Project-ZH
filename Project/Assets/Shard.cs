@@ -8,7 +8,6 @@ public class Shard : Entity {
 
 	public void setDirection(float dir){ //takes a direction in degrees and sets the direction field to the radian equivalent
 		direction_ = dir * (Mathf.PI/180.0f);
-		Debug.Log ("foo");
 	}
 
 	public override void Move(){

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : Entity {
 
-	private int ticks = 8;
+	private int ticks_;
 
 	public override void Move(){
 		Vector3 temp = this.transform.position;
@@ -14,16 +14,17 @@ public class Projectile : Entity {
 
 	// Use this for initialization
 	void Start () {
+		ticks_ = Controller.shot_range_;
 		setSpeed (0.06f * Player.dir_);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		Move ();
-		if (ticks == 0) {
+		if (ticks_ == 0) {
 			Destroy (this.gameObject);
 		}
-		ticks--;
+		ticks_--;
 	}
 		
 	//Collision detection.
@@ -34,7 +35,8 @@ public class Projectile : Entity {
 		}
 
 		//Solid collisions
-		if (collision.gameObject.GetComponents<Solid>() != null) {
+		if (collision.gameObject.GetComponent<Solid>() != null) {
+			collision.gameObject.GetComponent<Solid>().Explode();
 			Destroy (this.gameObject);
 		}
 
@@ -42,7 +44,7 @@ public class Projectile : Entity {
 		if (collision.gameObject.GetComponent<Enemy>() != null) {
 			Destroy (this.gameObject);
 			if (!collision.gameObject.GetComponent<Enemy>().getInvincible ()) { //If enemy can be hurt, do the following.
-				collision.gameObject.GetComponent<Enemy>().takeDamage(20);
+				collision.gameObject.GetComponent<Enemy>().takeDamage(Controller.dmg_);
 			}
 		}
 	}

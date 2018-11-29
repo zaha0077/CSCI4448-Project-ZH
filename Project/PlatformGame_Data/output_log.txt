@@ -1,0 +1,31 @@
+Initialize engine version: 5.5.4p4 (e92bef0ab5a4)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Radeon RX 580 Series (ID=0x67df)
+    Vendor:   ATI
+    VRAM:     3072 MB
+    Driver:   24.20.11016.4
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+- Completed reload, in  0.017 seconds
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Nazgul0616\Documents\GitHub\CSCI4448-Project-ZH\Project\PlatformGame_Data\Managed\System.dll (this message is harmless)
+<RI> Initializing input.
+<RI> Input initialized.
+desktop: 1920x1080 59Hz; virtual: 1920x1080 at 0,0
+<RI> Initialized touch support.
+UnloadTime: 2.167417 ms
+Setting up 3 worker threads for Enlighten.
+  Thread -> id: 5310 -> priority: 1 
+  Thread -> id: 4ddc -> priority: 1 
+  Thread -> id: 3fdc -> priority: 1 

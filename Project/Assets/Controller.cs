@@ -12,6 +12,7 @@ public class Controller : MonoBehaviour {
 	private Color red_ = new Color (1f, 0f, 0f);
 	private Color white_ = new Color (1f, 1f, 1f);
 	private string wintext_ = "A Winner is You!"; //text to display on winning.
+	private int txt_timer_ = -1; //Counter for how long to display a particular text.
 
 	//game parameters
 	private bool critical_ = false; //is health critical?
@@ -24,7 +25,6 @@ public class Controller : MonoBehaviour {
 	public static int dmg_; //Player bullet damage
 	public static int jumpcap_; //How many times the player can jump consecutively.
 	public static string txtstr_ = ""; //text to display 
-	public static int txt_timer_ = -1; //Counter for how long to display a particular text.
 	public static bool txtflag_ = false; //Used to tell when to update displayed text.
 	public static bool endflag_ = false; //Did we win?
 

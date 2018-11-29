@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Concrete behaviors for items to have.
+/**
+ * Parent class used for item behavior.
+ */
 public abstract class Effect {
+	/**
+	 * Executes the effect's behavior as defined by derived classes.
+	 */
 	public abstract void Execute ();
 }
 
-//Extends player projectile range by the amount specified.
+/**
+* Implementation of Effect that increases the player's shot range by a specified value upon execution.
+*/
 public class Rangeup : Effect {
 	private int amount_;
 
@@ -20,7 +27,9 @@ public class Rangeup : Effect {
 	}
 }
 
-//Increases the player's fire rate
+/**
+* Implementation of Effect that increases the player's fire rate by a specified value upon execution.
+*/
 public class Rateup : Effect {
 	private int amount_;
 
@@ -33,7 +42,9 @@ public class Rateup : Effect {
 	}
 }
 
-//Increases the player's damage output.
+/**
+* Implementation of Effect that increases the player's shot damage by a specified value upon execution.
+*/
 public class Damageup : Effect {
 	private int amount_;
 
@@ -46,7 +57,9 @@ public class Damageup : Effect {
 	}
 }
 
-//Sets unique text to display upon item collection.
+/**
+* Implementation of Effect that changes the text to be displayed by the Controller class and sets the text update flag to true.
+*/
 public class ShowText : Effect {
 
 	private string str_;
@@ -61,7 +74,9 @@ public class ShowText : Effect {
 	}
 }
 
-//Changes the jump cap.
+/**
+* Implementation of Effect that sets the amount of times the player can jump to the specified value.
+*/
 public class JumpChange : Effect {
 	private int val_;
 
@@ -74,26 +89,30 @@ public class JumpChange : Effect {
 	}
 }
 
-//"Abstract" parent class for items, which use the Factory design pattern for their generation.
+/**
+* Parent class of items, which use the Factory design pattern to define how they change game parameters upon being collected.
+*/
 public class Item : MonoBehaviour {
 	//An item has a list of effects that are executed 
 	protected List<Effect> effects_ = new List<Effect>();
 
-	//Factory Method
+	/**Factory method used to assign item behaviors upon instantiation*/
 	public virtual void SetEffects(){}
 
-	//Overrides of Monobehavior functions
-	// initialization
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * MonoBehavior derived classes use this function for instantiation rather than the constructor.
+	*/
 	void Start () {
 		SetEffects ();
 	}
-	
-	// Code to be executed every frame
-	void Update () {
-		
-	}
 
-	//Collision Behavior.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is used in collision detection.
+	*/
 	void OnCollisionEnter2D(Collision2D col){
 		//Upon touching the player, execute every behavior this item has.
 		if (col.gameObject.GetComponent<Player> () != null) {

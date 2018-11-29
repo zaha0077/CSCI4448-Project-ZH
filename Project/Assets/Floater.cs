@@ -2,29 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//This enemy lazily floats, bouncing off of walls in its path.
+/**An Enemy that lazily floats horizontally, bouncing off of walls in its path.*/
 public class Floater : Enemy {
 
 	private bool cooldown_ = false; //Used to prevent colliding with the same wall more than once.
 	private int bounceticks_ = -1;
 
+	/**
+	* Unique movement behavior for this Enemy.
+	*/
 	public override void Move(){
 		Vector3 temp = this.transform.position;
-		temp.x += getSpeed (); 
+		temp.x += GetSpeed (); 
 		this.transform.position = temp;
 	}
 
-	//Functions from Unity's MonoBehavior class.
-	// Initialization
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * MonoBehavior derived classes use this function for instantiation rather than the constructor.
+	*/
 	void Start () {
-		setSpeed (0.01f);
+		SetSpeed (0.01f);
 		hp_ = 40;
 	}
 
-	// Code executed every frame.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is called every frame inside the game.
+	*/
 	void Update () {
 		Move ();
-		manageHealth ();
+		ManageHealth ();
 		if (bounceticks_ > -1) {
 			if (bounceticks_ == 0) {
 				cooldown_ = false;
@@ -33,12 +43,16 @@ public class Floater : Enemy {
 		}
 	}
 
-	//Collision Detection
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is used in collision detection.
+	*/
 	void OnCollisionEnter2D(Collision2D col){
 		if (col.gameObject.GetComponent<Solid>() != null && !cooldown_) {
 			bounceticks_ = hurt_max_;
 			cooldown_ = true;
-			setSpeed (-getSpeed());
+			SetSpeed (-GetSpeed());
 		}
 	}
 

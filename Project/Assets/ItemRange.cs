@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//This item doubles the player's range and increases their fire rate slightly.
+/**This Item doubles the player's range and increases their fire rate slightly.*/
 public class ItemRange : Item {
 
 	public override void SetEffects(){

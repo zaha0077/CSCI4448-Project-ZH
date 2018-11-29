@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//"abstract" calss for entities
+/**The parent class for mobile game entities, which holds common values related to damage and movement.
+*/
 public class Entity : MonoBehaviour {
 	private float speed_; //Movement velocity, some someclasses use this for horizontal movement only.
 	private bool invincible_ = false; //Can damageable objects be harmed?
@@ -13,36 +14,47 @@ public class Entity : MonoBehaviour {
 
 	public static bool quitting_ = false; //Controls when it's appropriate to spawn fragments on object destruction
 
-	public void setSpeed(float value){ 
+	/**
+	 * Sets the movement speed of the entity to a new value.
+	*/
+	public void SetSpeed(float value){ 
 		speed_ = value;
 	}
 
-	public float getSpeed(){
+	/**
+	 * Returns the current movement speed of the entity.
+	*/
+	public float GetSpeed(){
 		return speed_;
 	}
 
-	public void setInvincible(bool val){
+	/**
+	 * Sets the entity's invulnerability flag to the specified value.
+	*/
+	public void SetInvincible(bool val){
 		invincible_ = val;
 	}
 
-	public bool getInvincible(){
+	/**
+	 * Returns the value of the entity's invulnerability flag.
+	*/
+	public bool GetInvincible(){
 		return invincible_;
 	}
 
-	//Template for movement behavior
+	/**Function responsible for movement behavior.
+	 * 
+	 */
 	public virtual void Move(){
 	}
 
 	//Built-in unity functions used in almost all Unity classes:
-	// initialization
-	void Start () {
-	}
-	
-	// Behavior of the object at every frame
-	void Update () {
-	}
 
-	//Override of OnApplicationQuit from MonoBehavior.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function defines behavior to be performed upon the game closing.
+	*/
 	void OnApplicationQuit(){
 		quitting_ = true;
 	}

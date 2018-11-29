@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//This item grants a poweful long range shot.
+/**This Item grants a poweful long range shot.*/
 public class ItemSuperShot : Item {
 	
 	public override void SetEffects(){

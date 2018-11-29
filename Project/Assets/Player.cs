@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//This class handles player behavior.
+/**
+ * The most complex Entity in the game. This class handles the playable character and its behaviors.
+*/
 public class Player : Entity {
 
 	private float gravity_; //Vertical movement speed.
@@ -20,8 +22,10 @@ public class Player : Entity {
 
 
 
-	//Test for free space for horizontal movement.
-	bool checkPosition(float speed, Vector3 pos){
+	/**
+	 * Returns true if the position immediately ahead of the player's movement does not contain a Solid. False otherwise.
+	 */
+	bool CheckPosition(float speed, Vector3 pos){
 		Vector3 direction;
 		if (speed < 0.0f) {
 			direction = Vector2.left;
@@ -34,40 +38,50 @@ public class Player : Entity {
 		return !(Physics2D.Raycast (side_a, direction, 0.14f, LayerMask.GetMask("Solids")) && Physics2D.Raycast (side_b, direction, 0.14f, LayerMask.GetMask("Solids")));
 	}
 
-	//Sets the direction of the player's sprite.
-	float changeSpriteDirection(float value){
+	/**
+	 * Sets the direction of the player's sprite. Returns the modified direction.
+	 */
+	float ChangeSpriteDirection(float xscale){
 		if (hspeed_ != 0.0f) {
-			value = hspeed_ / Mathf.Abs (hspeed_);
-			dir_ = (int)value;
+			xscale = hspeed_ / Mathf.Abs (hspeed_);
+			dir_ = (int)xscale;
 		}
-		return value;
+		return xscale;
 	}
 
+	/**
+	* Jump behavior.
+	*/
 	public void Jump(){
 		in_air_ = true;
 		gravity_ = -0.14f;
 		jumps_++;
 	}
 
-	public bool canJump (){
+	/**
+	* Returns true if the player can jump, false otherwise.
+	*/
+	public bool CanJump (){
 		return Input.GetButtonDown ("Jump") && jumps_ < Controller.jumpcap_;
 	}
 
-	//Movement behavior
+	/**
+	* Unique movement behavior for the Player class.
+	*/
 	public override void Move(){
 		Vector3 temp = this.transform.position;
 		Vector3 scale = this.transform.localScale;
 
-		if (!getInvincible ()) {
-			hspeed_ = Input.GetAxis ("Horizontal") * getSpeed ();
-			scale.x = changeSpriteDirection (scale.x);
+		if (!GetInvincible ()) {
+			hspeed_ = Input.GetAxis ("Horizontal") * GetSpeed ();
+			scale.x = ChangeSpriteDirection (scale.x);
 		}
 	
-		if (checkPosition(hspeed_, temp)){
+		if (CheckPosition(hspeed_, temp)){
 			temp.x += hspeed_;
 			}
 
-		if (canJump()) {
+		if (CanJump()) {
 			Jump ();
 		}
 
@@ -79,10 +93,12 @@ public class Player : Entity {
 		this.transform.localScale = scale;
 	}
 
-	//Take damage.
-	public void triggerHurt(){
+	/**
+	* Has the player take damage.
+	*/
+	public void TriggerHurt(){
 		Controller.health_ -= 10;
-		setInvincible (true);
+		SetInvincible (true);
 		hurt_ticks_ = hurt_max_;
 		hspeed_ = -(hspeed_*2f); //knockback
 		in_air_ = true;
@@ -90,7 +106,9 @@ public class Player : Entity {
 		GetComponent<SpriteRenderer> ().color = hurtcolor_;
 	}
 
-	//Shooting
+	/**
+	* Shooting behavior.
+	*/
 	private void Shoot (){
 		if (Input.GetAxis ("Fire1") > 0 && can_shoot_) {
 			Instantiate (shot, this.transform.position, Quaternion.identity);
@@ -99,24 +117,28 @@ public class Player : Entity {
 		}
 	}
 
-	//Check if we walk off a platform.
-	private void checkFloor(Vector3 pos){
+	/**
+	* Checks if the player has walked off the edge of a platform and applies gravity if they have.
+	*/
+	private void CheckFloor(Vector3 pos){
 		
 		Vector3 side_a = new Vector3 (pos.x + 0.05f, pos.y, pos.z);
 		Vector3 side_b = new Vector3 (pos.x - 0.05f, pos.y, pos.z);
 
-		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f)) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f)))) {
+		if ((!in_air_) && ((!Physics2D.Raycast(side_a, Vector2.down, 0.18f, LayerMask.GetMask("Solids"))) && (!Physics2D.Raycast (side_b, Vector2.down, 0.18f, LayerMask.GetMask("Solids"))))) {
 			in_air_ = true;
 			jumps_++;
 		}
 	}
 
-	//Manage the timer for mercy invincibility.
-	private void resolveHurtCounter(){
+	/**
+	* Manages the player's brief invulnerability period after taking damage.
+	*/
+	private void ResolveHurtCounter(){
 		//Reset mercy invincibility
-		if (getInvincible () && hurt_ticks_ == 0) {
+		if (GetInvincible () && hurt_ticks_ == 0) {
 			GetComponent<SpriteRenderer> ().color = normalcolor_;
-			setInvincible (false);
+			SetInvincible (false);
 		}
 
 		//Decrement hurt ticks
@@ -125,8 +147,10 @@ public class Player : Entity {
 		}
 	}
 
-	//Resolves shot cooldown
-	private void resolveShotCooldown(){
+	/**
+	* Manages the cooldown period between shots.
+	*/
+	private void ResolveShotCooldown(){
 		//Decrement shot cooldown
 		if (cooldown_ > 0) {
 			cooldown_--;
@@ -135,29 +159,45 @@ public class Player : Entity {
 		}
 	}
 
-	//Apply gravity effects.
-	private void doFallAccelaration(){
+	/**
+	* Applies acceleration due to gravity.
+	*/
+	private void DoFallAccelaration(){
 		if (in_air_ && gravity_ < terminal_vel_) {
 			gravity_ += 0.01f;
 		}
 	}
 
-	//Overrides of functions from Unity's MonoBehavior class.
-	// Initialization
+	/** 
+	 * Takes a collision and returns true if the collided object is below the player.
+	*/
+	private bool GetVerticalRelative(Collision2D col){
+		return col.contacts[0].normal.y == 1.0f;
+	}
+
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * MonoBehavior derived classes use this function for instantiation rather than the constructor.
+	*/
 	void Start () {
 		in_air_ = true;
 		gravity_ = 0.0f;
-		setSpeed (0.03f);
+		SetSpeed (0.03f);
 	}
 	
-	// Code executed every frame
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is called every frame inside the game.
+	*/
 	void Update () {
 		//Shoot if able
 		Shoot();
-		doFallAccelaration ();
-		checkFloor(this.transform.position);
-		resolveHurtCounter ();
-		resolveShotCooldown ();
+		DoFallAccelaration ();
+		CheckFloor(this.transform.position);
+		ResolveHurtCounter ();
+		ResolveShotCooldown ();
 
 		//Apply movement behavior
 		if (!Controller.endflag_) {
@@ -166,18 +206,17 @@ public class Player : Entity {
 
 	}
 
-	//returns true if the opposing object is below the specified coordinates.
-	bool getVerticalRelative(Collision2D col){
-		return col.contacts[0].normal.y == 1.0f;
-	}
-
-	//Collision detection.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is used in collision detection.
+	*/
 	void OnCollisionEnter2D(Collision2D col){
 		//Solid collisions
 		if (col.gameObject.GetComponents<Solid>() != null) {
 			Vector3 temp = this.transform.position;
 
-			if (getVerticalRelative(col)) { //if there is a solid object below, stand on it.
+			if (GetVerticalRelative(col)) { //if there is a solid object below, stand on it.
 				in_air_ = false;
 				jumps_ = 0;
 				gravity_ = 0.0f;
@@ -193,8 +232,8 @@ public class Player : Entity {
 
 		//Enemy collision.
 		if (col.gameObject.GetComponent<Enemy>() != null) {
-			if (!getInvincible ()) { //If we can be hurt, do the following.
-				triggerHurt();
+			if (!GetInvincible ()) { //If we can be hurt, do the following.
+				TriggerHurt();
 			}
 		}
 
@@ -206,23 +245,32 @@ public class Player : Entity {
 		}
 	}
 
-	//Reduces chance of clipping through objects.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is used in collision detection.
+	*/
 	void OnCollisionStay2D(Collision2D col){
 		if (col.gameObject.GetComponents<Solid> () != null) {
 			Vector3 temp = this.transform.position;
 			temp.y = col.transform.position.y + 0.16f;
 		} else if (col.gameObject.GetComponent<Enemy> () != null) {
-			if (!getInvincible ()) { //If we can be hurt, do the following.
-				triggerHurt();
+			if (!GetInvincible ()) { //If we can be hurt, do the following.
+				TriggerHurt();
 			}
 		}
 	}
 
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is called when an instance of a MonoBehavior derived class is destroyed.
+	*/
 	void OnDestroy(){
 		if (!quitting_) {
 			for (int i = 1; i < 5; i++) {
 				GameObject tmp = Instantiate (shard, this.transform.position, Quaternion.identity);
-				tmp.GetComponent<Shard> ().setDirection (45.0f + (90.0f * i));
+				tmp.GetComponent<Shard> ().SetDirection (45.0f + (90.0f * i));
 			}
 		}
 	}

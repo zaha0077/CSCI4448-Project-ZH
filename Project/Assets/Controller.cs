@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/**
+ * Keeps track of the game as it's being played. 
+ */
 public class Controller : MonoBehaviour {
 	//personal params;
 	private Color red_ = new Color (1f, 0f, 0f);
@@ -130,22 +133,27 @@ public class Controller : MonoBehaviour {
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 		};
 
-
-	//Set the current display text.
-	public void setText(){
+	/**
+ 	* Sets the text to be displayed in the center of the screen to the string stored in txtstr_ 
+ 	*/
+	public void SetText(){
 		itemtxt.text = txtstr_;
 		txt_timer_ = 90;
 		txtflag_ = false;
 	}
 
-	//Restart the game
+	/**
+ 	* Resets the game 
+ 	*/
 	public void Restart(){
 		Entity.quitting_ = true;
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 
-	//Trigger a gameover
-	public void doGameOver(){
+	/**
+ 	* Triggers a gameover. 
+ 	*/
+	public void DoGameOver(){
 		health_ = 0;
 		Camera.main.transform.parent = null; //Tell the camera to stop following the player
 		Destroy(player_instance_); //kill the player.
@@ -155,8 +163,10 @@ public class Controller : MonoBehaviour {
 		gameover_ = true; //Prevent this section of code from being executed more than once.
 	}
 
-	//generate the level from the layout array.
-	public void generateLevel(){
+	/**
+ 	* Generates the game world using the data held in the layout array. 
+ 	*/
+	public void GenerateLevel(){
 		
 		float x0 = -1.28f;
 		float y0 = -0.96f;
@@ -203,8 +213,10 @@ public class Controller : MonoBehaviour {
 		}
 	}
 
-	//Adjust the health display in the UI
-	private void adjustHealthDisplay(){
+	/**
+	* Updates the health display in the upper corner of the screen.
+	*/
+	private void AdjustHealthDisplay(){
 		healthtxt.text = "HP: " + health_.ToString ();
 
 		if (health_ <= 30 && !critical_) {
@@ -216,8 +228,10 @@ public class Controller : MonoBehaviour {
 		}
 	}
 
-	//Checks for keyboard input and resolves accordingly
-	private void resolveKeys(){
+	/**
+	* Checks for the current keyboard input and executes any behavior associated with certain keys being pressed.
+	*/
+	private void ResolveKeys(){
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			Application.Quit ();
 		}
@@ -227,8 +241,10 @@ public class Controller : MonoBehaviour {
 		}
 	}
 
-	//Resolve timer-related actions
-	private void resolveTimer(){
+	/**
+	* Decrements the txt_timer_ counter and executes actions when it reaches 0.
+	*/
+	private void ResolveTimer(){
 		if (txt_timer_ == 0 ) {
 			if (gameover_) {
 				itemtxt.text = "Game Over";
@@ -242,8 +258,10 @@ public class Controller : MonoBehaviour {
 		txt_timer_--;
 	}
 
-	//Trigger a win if conditions are met
-	private void resolveEndgame(){
+	/**
+	* Tests if victory conditions have been met and triggers a win if they are.
+	*/
+	private void ResolveEndgame(){
 		if (endflag_ && itemtxt.text != wintext_) {
 			itemtxt.fontSize = 24;
 			itemtxt.text = wintext_;
@@ -251,9 +269,11 @@ public class Controller : MonoBehaviour {
 		}
 	}
 
-	//Overrides of functions from Unity's MonoBehavior class.
-
-	// Initialization
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * MonoBehavior derived classes use this function for instantiation rather than the constructor.
+	*/
 	void Start () {
 		player_instance_ = Instantiate (player, new Vector3 (0.0f, -0.72f, 0.0f), Quaternion.identity) as GameObject;
 		Camera.main.transform.parent = player_instance_.transform; //Set the camera to follow the player.
@@ -268,28 +288,32 @@ public class Controller : MonoBehaviour {
 		subtitle.text = "";
 		Entity.quitting_ = false;
 
-		generateLevel ();
+		GenerateLevel ();
 	}
 	
-	// Code executed every frame.
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is called every frame inside the game.
+	*/
 	void Update () {
 
-		resolveKeys ();
+		ResolveKeys ();
 
 		if (txtflag_){
-			setText ();
+			SetText ();
 		}
 
-		adjustHealthDisplay ();
+		AdjustHealthDisplay ();
 
 		if (health_ <= 0 && !gameover_) {
-			doGameOver ();
+			DoGameOver ();
 		}
 			
 		if (txt_timer_ >= 0) {
-			resolveTimer ();
+			ResolveTimer ();
 		}
 			
-		resolveEndgame ();
+		ResolveEndgame ();
 	}
 }

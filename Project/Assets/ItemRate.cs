@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Greatly boosts fire rate.
+/**This Item greatly boosts fire rate.*/
 public class ItemRate : Item {
 
 	public override void SetEffects(){

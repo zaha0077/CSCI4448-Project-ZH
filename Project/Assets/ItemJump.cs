@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//This item grants double jumping.
+/**This Item grants double jumping.*/
 public class ItemJump : Item {
 
 	public override void SetEffects(){

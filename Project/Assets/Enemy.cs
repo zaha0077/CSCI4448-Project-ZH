@@ -2,18 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Parent class of all enemies in the game.
+*/
 public class Enemy : Entity {
 	protected int hp_;
 	public GameObject shard;
 
-	public void takeDamage(int value){
+	/**
+	 * Subtracts a specified value from the enemy's hp.
+	*/
+	public void TakeDamage(int value){
 		hp_ -= value;
 		GetComponent<SpriteRenderer> ().color = hurtcolor_;
 		hurt_ticks_ = hurt_max_;
 	}
 
-	//Manages behavior when for when enemies take damage or die.
-	public void manageHealth(){
+	/**
+	 * Manages behavior relating to enemies being damaged, including enemy death.
+	*/
+	public void ManageHealth(){
 		//Reset color
 		if (hurt_ticks_ == 0) {
 			GetComponent<SpriteRenderer> ().color = normalcolor_;
@@ -31,14 +39,16 @@ public class Enemy : Entity {
 		}
 	}
 
-	//Functions from Unity's MonoBehavior class.
-
-	//Destruction behavior
+	/**
+	 * Defined in Unity's MonoBehavior class. 
+	 * 
+	 * This function is called when an instance of a MonoBehavior derived class is destroyed.
+	*/
 	void OnDestroy(){
 		if (!quitting_) {
 			for (int i = 1; i < 5; i++) {
 				GameObject tmp = Instantiate (shard, this.transform.position, Quaternion.identity);
-				tmp.GetComponent<Shard> ().setDirection (45.0f + (90.0f * i));
+				tmp.GetComponent<Shard> ().SetDirection (45.0f + (90.0f * i));
 			}
 		}
 	}
